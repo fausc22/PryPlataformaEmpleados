@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Runtime.CompilerServices;
+
 namespace PryPlataformaEmpleados
 {
     class clsClase
@@ -189,14 +191,18 @@ namespace PryPlataformaEmpleados
                         }
                     }   
 
-                    if (EsFeriado(fecha))
+                    if (EsFeriado(fecha) == true)
                     {
-                        valorHora = valorHora * 2;
+                        acumulado = horaT * (valorHora * 2);
 
+                    }
+                    else
+                    {
+                        acumulado = horaT * valorHora;
                     }
 
 
-                    acumulado = horaT * valorHora;
+                    
 
 
                     using (MySqlCommand cmd = new MySqlCommand($"INSERT INTO {tabla} (fecha, nombre_empleado, hora_ingreso, hora_egreso, horas_trabajadas, acumulado, mes) VALUES (@fecha, @nombre, @horaIngreso, @horaEgreso, @horaT, @acumulado, @mes)", conn)) 
@@ -224,16 +230,31 @@ namespace PryPlataformaEmpleados
 
         public bool EsFeriado(string fecha)
         {
-            using (MySqlConnection conn = new MySqlConnection(cadenaConexion))
+            try
             {
-                using (MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM feriados WHERE Fecha = @fecha", conn))
+                using (MySqlConnection conn = new MySqlConnection(cadenaConexion))
                 {
-                    cmd.Parameters.AddWithValue("@fecha", fecha);
-                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    conn.Open();
+                    using (MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) FROM feriados WHERE fecha = @fecha", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@fecha", fecha);
+                        object result = cmd.ExecuteScalar();
+                        int count = result != null ? Convert.ToInt32(result) : 0;
 
-                    // Si count es mayor que 0, la fecha es un feriado
-                    return count > 0;
+                        if (count > 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
                 }
+            }catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw;
             }
         }
 
