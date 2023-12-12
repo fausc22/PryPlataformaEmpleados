@@ -252,7 +252,7 @@ namespace PryPlataformaEmpleados
             DateTime fechaActual = DateTime.Now;
 
             // Formatear la fecha en el formato deseado
-            string fechaFormateada = fechaActual.ToString("dd/MM/yyyy");
+            string fechaFormateada = fechaActual.ToString("d/MM/yyyy");
             TimeSpan tiempo = fechaActual.TimeOfDay;
             // Obtener el nombre del mes actual en formato de cadena
             string nombreMesActual = DateTime.Now.ToString("MMMM");
