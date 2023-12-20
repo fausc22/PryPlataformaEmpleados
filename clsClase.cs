@@ -80,6 +80,8 @@ namespace PryPlataformaEmpleados
                 using (MySqlConnection conn = new MySqlConnection(cadenaConexion))
                 {
                     conn.Open();
+
+
                     string tabla = "logueo_" + anio;
                     using (MySqlCommand cmd = new MySqlCommand($"INSERT INTO {tabla} (fecha, nombre_empleado, accion, hora, mes, huella_dactilar) VALUES (@fecha, @nombre, @accion, @hora, @mes, @huella_dactilar)", conn))
                     {
@@ -109,6 +111,50 @@ namespace PryPlataformaEmpleados
             }
 
             
+
+
+        }
+
+        public bool NuevoLogeoManual(string nombre, string email, string fecha, string accion, TimeSpan hora, string anio, string mes)
+        {
+            try
+            {
+
+                using (MySqlConnection conn = new MySqlConnection(cadenaConexion))
+                {
+                    conn.Open();
+                    // Obtener la huella dactilar desde la base de datos
+                    byte[] huellaGuardada = ObtenerHuellaDesdeBD(nombre, conn);
+
+                    string tabla = "logueo_" + anio;
+                    using (MySqlCommand cmd = new MySqlCommand($"INSERT INTO {tabla} (fecha, nombre_empleado, accion, hora, mes, huella_dactilar) VALUES (@fecha, @nombre, @accion, @hora, @mes, @huella_dactilar)", conn))
+                    {
+
+                        cmd.Parameters.AddWithValue("@fecha", fecha);
+                        cmd.Parameters.AddWithValue("@nombre", nombre);
+                        cmd.Parameters.AddWithValue("@accion", accion);
+                        cmd.Parameters.AddWithValue("@hora", hora);
+                        cmd.Parameters.AddWithValue("@mes", mes);
+                        cmd.Parameters.AddWithValue("@huella_dactilar", huellaGuardada);
+
+
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Registro enviado con éxito.");
+                        return true;
+
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                // Maneja la excepción según tus necesidades
+                MessageBox.Show("Error al registrar: " + ex.Message);
+                return false;
+            }
+
+
 
 
         }
@@ -256,6 +302,26 @@ namespace PryPlataformaEmpleados
                 MessageBox.Show(ex.Message);
                 throw;
             }
+        }
+
+        private byte[] ObtenerHuellaDesdeBD(string nombre, MySqlConnection connection)
+        {
+            byte[] huella = null;
+
+            using (MySqlCommand cmd = new MySqlCommand("SELECT huella_dactilar FROM empleados WHERE nombre = @nombre", connection))
+            {
+                cmd.Parameters.AddWithValue("@nombre", nombre);
+
+                using (MySqlDataReader rdr = cmd.ExecuteReader())
+                {
+                    if (rdr.Read())
+                    {
+                        huella = (byte[])rdr["huella_dactilar"];
+                    }
+                }
+            }
+
+            return huella;
         }
 
     }

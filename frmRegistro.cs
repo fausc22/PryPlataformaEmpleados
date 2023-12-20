@@ -16,12 +16,13 @@ namespace PryPlataformaEmpleados
         private bool bIsTimeToDie = false;
         private byte[] FPBuffer;
         public byte[] huella;
-
+        
         bool cerrar = false;
 
         string nombre = "";
         string email = "";
         string accion = "";
+        bool manual = false;
 
         private int mfpWidth = 0;
         private int mfpHeight = 0;
@@ -42,6 +43,7 @@ namespace PryPlataformaEmpleados
         private void frmRegistro_Load(object sender, EventArgs e)
         {
             FormHandle = this.Handle;
+            
         }
 
         private void bnInit_Click(object sender, EventArgs e)
@@ -102,6 +104,21 @@ namespace PryPlataformaEmpleados
                 else
                 {
                     MessageBox.Show("ERROR: Verificar que el lector este conectado correctamente.");
+                    // Mostrar el cuadro de diálogo de sí/no
+                    DialogResult resultado = MessageBox.Show("¿Habilitar el logueo manual?", "Confirmación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    // Verificar la respuesta del usuario
+                    if (resultado == DialogResult.Yes)
+                    {
+                        // Habilitar los botones aquí
+                        lblPw.Visible = true;
+                        txtPw.Visible = true;
+                        txtPw.Enabled = true;
+                        btnRegistrar.Visible = true;
+                        btnRegistrar.Enabled = false;
+                        manual = true;
+                    }
+                    
                 }
             }
             else
@@ -252,14 +269,22 @@ namespace PryPlataformaEmpleados
             DateTime fechaActual = DateTime.Now;
 
             // Formatear la fecha en el formato deseado
-            string fechaFormateada = fechaActual.ToString("d/MM/yyyy");
+            string fechaFormateada = fechaActual.ToString("dd/MM/yyyy");
             TimeSpan tiempo = fechaActual.TimeOfDay;
             // Obtener el nombre del mes actual en formato de cadena
             string nombreMesActual = DateTime.Now.ToString("MMMM");
             // Obtener el año actual
             int anioActual = DateTime.Now.Year;
             string anio = anioActual.ToString();
-            cerrar = objC.NuevoLogeo(nombre, email, fechaFormateada, accion, tiempo, anio, nombreMesActual, huella);
+            if (manual == true)
+            {
+                cerrar = objC.NuevoLogeoManual(nombre, email, fechaFormateada, accion, tiempo, anio, nombreMesActual);
+            }
+            else
+            {
+                cerrar = objC.NuevoLogeo(nombre, email, fechaFormateada, accion, tiempo, anio, nombreMesActual, huella);
+            }
+            
 
 
             if (accion == "EGRESO")
@@ -273,6 +298,21 @@ namespace PryPlataformaEmpleados
             if (cerrar == true)
             {
                 this.Close();
+            }
+        }
+
+        private void txtPw_TextChanged(object sender, EventArgs e)
+        {
+            // Obtener la fecha actual
+            DateTime fechaActual = DateTime.Now;
+
+            // Obtener el número del día actual
+            int numeroDia = fechaActual.Day;
+            string dia = numeroDia.ToString();
+
+            if (txtPw.Text == dia)
+            {
+                btnRegistrar.Enabled = true;
             }
         }
     }

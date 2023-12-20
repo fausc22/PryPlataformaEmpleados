@@ -40,6 +40,8 @@
             this.txtNombre = new System.Windows.Forms.TextBox();
             this.txtMail = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.lblPw = new System.Windows.Forms.Label();
+            this.txtPw = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbHuella)).BeginInit();
             this.gpForm.SuspendLayout();
             this.SuspendLayout();
@@ -68,7 +70,7 @@
             // 
             // pbHuella
             // 
-            this.pbHuella.Location = new System.Drawing.Point(208, 18);
+            this.pbHuella.Location = new System.Drawing.Point(208, 20);
             this.pbHuella.Name = "pbHuella";
             this.pbHuella.Size = new System.Drawing.Size(131, 174);
             this.pbHuella.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -80,8 +82,10 @@
             // 
             // gpForm
             // 
+            this.gpForm.Controls.Add(this.txtPw);
             this.gpForm.Controls.Add(this.optEgreso);
             this.gpForm.Controls.Add(this.optIngreso);
+            this.gpForm.Controls.Add(this.lblPw);
             this.gpForm.Controls.Add(this.btnRegistrar);
             this.gpForm.Controls.Add(this.label3);
             this.gpForm.Controls.Add(this.lblId);
@@ -94,7 +98,7 @@
             this.gpForm.Margin = new System.Windows.Forms.Padding(2);
             this.gpForm.Name = "gpForm";
             this.gpForm.Padding = new System.Windows.Forms.Padding(2);
-            this.gpForm.Size = new System.Drawing.Size(373, 279);
+            this.gpForm.Size = new System.Drawing.Size(355, 279);
             this.gpForm.TabIndex = 10;
             this.gpForm.TabStop = false;
             this.gpForm.Text = "INGRESE SUS DATOS";
@@ -133,7 +137,7 @@
             // btnRegistrar
             // 
             this.btnRegistrar.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.btnRegistrar.Location = new System.Drawing.Point(225, 208);
+            this.btnRegistrar.Location = new System.Drawing.Point(208, 208);
             this.btnRegistrar.Name = "btnRegistrar";
             this.btnRegistrar.Size = new System.Drawing.Size(114, 44);
             this.btnRegistrar.TabIndex = 16;
@@ -159,6 +163,7 @@
             this.txtNombre.Name = "txtNombre";
             this.txtNombre.Size = new System.Drawing.Size(128, 20);
             this.txtNombre.TabIndex = 14;
+            this.txtNombre.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtNombre.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
             // 
             // txtMail
@@ -169,6 +174,7 @@
             this.txtMail.Name = "txtMail";
             this.txtMail.Size = new System.Drawing.Size(128, 20);
             this.txtMail.TabIndex = 13;
+            this.txtMail.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtMail.TextChanged += new System.EventHandler(this.txtMail_TextChanged);
             // 
             // label1
@@ -181,12 +187,37 @@
             this.label1.TabIndex = 11;
             this.label1.Text = "NOMBRE";
             // 
+            // lblPw
+            // 
+            this.lblPw.AutoSize = true;
+            this.lblPw.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPw.Location = new System.Drawing.Point(220, 155);
+            this.lblPw.Name = "lblPw";
+            this.lblPw.Size = new System.Drawing.Size(91, 13);
+            this.lblPw.TabIndex = 19;
+            this.lblPw.Text = "CONTRASEÑA";
+            this.lblPw.Visible = false;
+            // 
+            // txtPw
+            // 
+            this.txtPw.Enabled = false;
+            this.txtPw.Location = new System.Drawing.Point(223, 170);
+            this.txtPw.Margin = new System.Windows.Forms.Padding(2);
+            this.txtPw.MaxLength = 2;
+            this.txtPw.Name = "txtPw";
+            this.txtPw.Size = new System.Drawing.Size(88, 20);
+            this.txtPw.TabIndex = 20;
+            this.txtPw.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtPw.UseSystemPasswordChar = true;
+            this.txtPw.Visible = false;
+            this.txtPw.TextChanged += new System.EventHandler(this.txtPw_TextChanged);
+            // 
             // frmRegistro
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.ClientSize = new System.Drawing.Size(395, 311);
+            this.ClientSize = new System.Drawing.Size(377, 311);
             this.Controls.Add(this.gpForm);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmRegistro";
@@ -214,6 +245,8 @@
         private System.Windows.Forms.RadioButton optEgreso;
         private System.Windows.Forms.RadioButton optIngreso;
         private System.Windows.Forms.Button btnRegistrar;
+        private System.Windows.Forms.TextBox txtPw;
+        private System.Windows.Forms.Label lblPw;
     }
 }
 
