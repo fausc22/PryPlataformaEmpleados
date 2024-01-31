@@ -22,16 +22,29 @@ namespace PryPlataformaEmpleados
         //static string pw = "251199";
         //static string port = "3306";
 
-        static string servidor = "www.rsoftware.com.ar";
-        static string bd = "planificadordatabase";
+        //static string servidor = "www.rsoftware.com.ar";
+        //static string bd = "planificadordatabase";
+        //static string user = "planificador";
+        //static string pw = "251199";
+
+        static string servidor = "localhost";
+        static string bd = "planificador";
         static string user = "planificador";
         static string pw = "251199";
-        
+        static string port = "3306";
+
+        //static string servidor = "26.206.2.45";
+        //static string bd = "planificador";
+        //static string user = "planificador";
+        //static string pw = "251199";
+        //static string port = "3306";
 
 
 
 
-        string cadenaConexion = "server=" + servidor + ";" + "user=" + user + ";" + "password=" + pw + ";" + "database=" + bd + ";";
+
+
+        string cadenaConexion = "server=" + servidor + ";port=" + port + ";user=" + user + ";password=" + pw + ";database=" + bd + ";";
 
 
 
@@ -198,6 +211,48 @@ namespace PryPlataformaEmpleados
 
             return hora;
         }
+
+        public int ExisteIngreso(string nombre, string fecha, string mes, string anio)
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(cadenaConexion))
+                {
+                    conn.Open();
+
+                    string tabla = "logueo_" + anio;
+                    using (MySqlCommand cmd = new MySqlCommand($"SELECT accion FROM {tabla} WHERE nombre_empleado = @nombre AND mes = @mes ORDER BY id DESC LIMIT 1;", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@nombre", nombre);
+                        cmd.Parameters.AddWithValue("@mes", mes);
+                        
+
+                        using (MySqlDataReader rdr = cmd.ExecuteReader())
+                        {
+                            while (rdr.Read())
+                            {
+                                string accion = rdr["accion"].ToString();
+                                if (accion == "INGRESO")
+                                {
+                                    return 1;
+                                }
+                            }
+                        }
+
+                        // No se encontró un ingreso pendiente
+                        return 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Maneja la excepción según tus necesidades
+                MessageBox.Show("Error al registrar: " + ex.Message);
+                return 0;
+            }
+            
+        }
+
 
         public bool NuevoIngresoEgreso(string nombre, string fecha, TimeSpan horaIngreso, TimeSpan horaEgreso, string mes, string anio)
         {

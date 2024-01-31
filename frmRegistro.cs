@@ -50,9 +50,31 @@ namespace PryPlataformaEmpleados
         {
             nombre = txtNombre.Text;
             email = txtMail.Text;
+            // Obtener la fecha actual
+            DateTime fechaActual = DateTime.Now;
+
+            // Formatear la fecha en el formato deseado
+            string fechaFormateada = fechaActual.ToString("dd/MM/yyyy");
+            TimeSpan tiempo = fechaActual.TimeOfDay;
+            // Obtener el nombre del mes actual en formato de cadena
+            string nombreMesActual = DateTime.Now.ToString("MMMM");
+            // Obtener el año actual
+            int anioActual = DateTime.Now.Year;
+            string anio = anioActual.ToString();
 
             if (objC.IniciarSesion(nombre, email))
             {
+                if (optIngreso.Checked == true)
+                {
+                    int accionRepetida = objC.ExisteIngreso(nombre, fechaFormateada, nombreMesActual, anio);
+                    if (accionRepetida == 1)
+                    {
+                        MessageBox.Show("Ya existe un registro de ingreso anteriormente. Verifique la opción correctamente.", "ATENCION", MessageBoxButtons.OK);
+                        return;
+                    }
+                }
+                
+
                 int ret = zkfperrdef.ZKFP_ERR_OK;
                 if ((ret = zkfp2.Init()) == zkfperrdef.ZKFP_ERR_OK)
                 {
