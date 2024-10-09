@@ -27,17 +27,17 @@ namespace PryPlataformaEmpleados
         //static string user = "planificador";
         //static string pw = "251199";
 
+        //static string servidor = "localhost";
+        //static string bd = "planificador";
+        //static string user = "planificador";
+        //static string pw = "251199";
+        //static string port = "3306";
+
         static string servidor = "localhost";
         static string bd = "planificador";
         static string user = "planificador";
         static string pw = "251199";
         static string port = "3306";
-
-        //static string servidor = "26.206.2.45";
-        //static string bd = "planificador";
-        //static string user = "planificador";
-        //static string pw = "251199";
-        //static string port = "3306";
 
 
 
@@ -258,7 +258,8 @@ namespace PryPlataformaEmpleados
         {
             int valorHora = 0;
             int horaT = 0;
-            int acumulado = 0;
+            double horaH = 0;
+            double acumulado = 0;
             TimeSpan horasTrabajadas = TimeSpan.Zero;
             if (horaEgreso < horaIngreso)
             {
@@ -269,7 +270,8 @@ namespace PryPlataformaEmpleados
                 horasTrabajadas = horaEgreso - horaIngreso;
             }
             
-            horaT = Convert.ToInt32(Math.Round(horasTrabajadas.TotalHours));
+            horaT = Convert.ToInt32(Math.Round(horasTrabajadas.TotalMinutes));
+            horaH = horaT / 60.00;
             string tabla = "controlhs_" + anio;
 
 
@@ -292,18 +294,16 @@ namespace PryPlataformaEmpleados
                         }
                     }   
 
-                    if (EsFeriado(fecha) == true)
-                    {
-                        acumulado = horaT * (valorHora * 2);
-
-                    }
-                    else
-                    {
-                        acumulado = horaT * valorHora;
-                    }
-
-
                     
+
+                    acumulado = horaH * valorHora;
+                    int acumuladoFacha = Convert.ToInt32(acumulado);
+                    if (EsFeriado(fecha))
+                    {
+                        clsClase objC = new clsClase();
+                        objC.NuevoPagoHorasExtras(nombre, anio, mes, acumuladoFacha, fecha, horaT);
+                    }
+
 
 
                     using (MySqlCommand cmd = new MySqlCommand($"INSERT INTO {tabla} (fecha, nombre_empleado, hora_ingreso, hora_egreso, horas_trabajadas, acumulado, mes) VALUES (@fecha, @nombre, @horaIngreso, @horaEgreso, @horaT, @acumulado, @mes)", conn)) 
@@ -328,6 +328,43 @@ namespace PryPlataformaEmpleados
                 return false;
             }
         }
+
+
+        public void NuevoPagoHorasExtras(string nombre, string anio, string mes, int monto, string fecha, int horasTrabajadas)
+        {
+
+
+            int detalle = 1;
+            string categoria = "HORAS EXTRAS FERIADO";
+            string descripcion = fecha + " - " + horasTrabajadas + " Horas trabajadas";
+            string tablaAnual = "extras_" + anio;
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(cadenaConexion))
+                {
+                    conn.Open();
+
+                    using (MySqlCommand cmd = new MySqlCommand($"INSERT INTO {tablaAnual} (nombre_empleado, mes, detalle, categoria, monto, descripcion) VALUES (@nombre, @mes, @detalle, @categoria, @monto, @descripcion)", conn))
+                    {
+                        cmd.Parameters.AddWithValue("@nombre", nombre);
+                        cmd.Parameters.AddWithValue("@mes", mes);
+                        cmd.Parameters.AddWithValue("@detalle", detalle);
+                        cmd.Parameters.AddWithValue("@categoria", categoria);
+                        cmd.Parameters.AddWithValue("@monto", monto);
+                        cmd.Parameters.AddWithValue("@descripcion", descripcion);
+
+                        cmd.ExecuteNonQuery();
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
 
         public bool EsFeriado(string fecha)
         {
